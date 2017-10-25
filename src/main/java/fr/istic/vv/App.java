@@ -1,6 +1,8 @@
 package fr.istic.vv;
 
 import javassist.*;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
 
 import java.io.File;
 
@@ -39,6 +41,8 @@ public class App
             loader.addTranslator(pool, logger);
             pool.appendClassPath(classDir.getPath());
             loader.run("fr.istic.vv.TargetApp", args);
+            JUnitCore jUnitCore= new JUnitCore();
+            Result r = jUnitCore.run();
         }
 
         catch(Throwable exc) {
