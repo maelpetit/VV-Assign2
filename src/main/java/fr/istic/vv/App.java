@@ -2,18 +2,14 @@ package fr.istic.vv;
 
 import javassist.*;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Request;
 import org.junit.runner.Result;
 
 import java.io.File;
 
 public class App 
 {
-    public static void main(String[] args )
-    {
-        try {
-            //TODO: Your code goes here
-            ClassPool pool = ClassPool.getDefault();
-            /*CtClass pointClass = pool.makeClass("Point");
+    /*CtClass pointClass = pool.makeClass("Point");
             CtField xField = CtField.make("public int x;", pointClass);
             CtField yField = CtField.make("public int y;", pointClass);
             pointClass.addField(xField);
@@ -25,24 +21,32 @@ public class App
                     pointClass));
             pointClass.writeFile();*/
 
-            Loader loader = new Loader(pool);
-            Translator logger = new Translator() {
-                public void start(ClassPool classPool) throws NotFoundException, CannotCompileException {
-                    System.out.println("Starting");
-                }
+    public static void main(String[] args )
+    {
+        try {
+            ClassPool pool = ClassPool.getDefault();
 
-                public void onLoad(ClassPool classPool, String className) throws NotFoundException, CannotCompileException {
-                    System.out.println(className);
-                }
-            };
+            Loader loader = new Loader(pool);
+            Translator translator = new MyTranslator();
             File classDir = new File("../TargetProject/target/classes");
-            System.out.println(classDir.exists());
-            System.out.println(classDir.getAbsolutePath());
-            loader.addTranslator(pool, logger);
+            File testDir = new File("../TargetProject/target/test-classes");
+            loader.addTranslator(pool, translator);
             pool.appendClassPath(classDir.getPath());
+            pool.appendClassPath(testDir.getPath());
             loader.run("fr.istic.vv.TargetApp", args);
             JUnitCore jUnitCore= new JUnitCore();
-            Result r = jUnitCore.run();
+            String[] classes = {"fr.istic.vv.AdditionTest",
+                    "fr.istic.vv.MultiplicationTest",
+                    "fr.istic.vv.DivisionTest",
+                    "fr.istic.vv.SubtractionTest"};
+            for(CtClass ctClass : pool.get(classes)){
+                Request request = Request.aClass(ctClass.toClass());
+                Result r = jUnitCore.run(request);
+                System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
+                System.out.println(r.getFailures());
+                System.out.println(r.wasSuccessful());
+            }
+
         }
 
         catch(Throwable exc) {
