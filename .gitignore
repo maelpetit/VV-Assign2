@@ -1,6 +1,13 @@
 
-\.idea/
 
 *.class
+/.idea/compiler.xml
+/.idea/xtextAutoBuilderState.xml
+/.idea/libraries/
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/inspectionProfiles/
+/.idea/workspace.xml
+/.idea/encodings.xml
 
 vv-assign3\.iml

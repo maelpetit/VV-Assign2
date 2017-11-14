@@ -6,6 +6,8 @@ import org.junit.runner.Request;
 import org.junit.runner.Result;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class App 
 {
@@ -34,17 +36,19 @@ public class App
             pool.appendClassPath(classDir.getPath());
             pool.appendClassPath(testDir.getPath());
             loader.run("fr.istic.vv.TargetApp", args);
+
             JUnitCore jUnitCore= new JUnitCore();
             String[] classes = {"fr.istic.vv.AdditionTest",
                     "fr.istic.vv.MultiplicationTest",
                     "fr.istic.vv.DivisionTest",
                     "fr.istic.vv.SubtractionTest"};
             for(CtClass ctClass : pool.get(classes)){
+                System.out.println("test: "+ ctClass.getName());
                 Request request = Request.aClass(ctClass.toClass());
                 Result r = jUnitCore.run(request);
                 System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
-                System.out.println(r.getFailures());
-                System.out.println(r.wasSuccessful());
+                //System.out.println(r.getFailures());
+                //System.out.println(r.wasSuccessful());
             }
 
         }
