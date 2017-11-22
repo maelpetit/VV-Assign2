@@ -21,6 +21,7 @@ public class MutateTests {
     static MyTranslator translator;
     static JUnitCore jUnitCore;
     static Set<Class> testClasses = new HashSet<Class>();
+    static String targetDir = "target/classes";
 
     @BeforeClass
     public static void initClass() throws Throwable {
@@ -58,7 +59,7 @@ public class MutateTests {
     public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException {
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
-            Mutators.replaceReturnInDoubleMethods(ctClass).writeFile("target/classes");
+            Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(targetDir);
         }
         runTests();
     }
@@ -67,7 +68,7 @@ public class MutateTests {
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
-            Mutators.setBooleanMethodsTo(ctClass, true).writeFile("target/classes");
+            Mutators.setBooleanMethodsTo(ctClass, true).writeFile(targetDir);
         }
         runTests();
     }
@@ -76,7 +77,7 @@ public class MutateTests {
     public void setBooleanMethodsToFalse() throws NotFoundException, CannotCompileException, IOException {
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
-            Mutators.setBooleanMethodsTo(ctClass, false).writeFile("target/classes");
+            Mutators.setBooleanMethodsTo(ctClass, false).writeFile(targetDir);
         }
         runTests();
     }
@@ -90,8 +91,8 @@ public class MutateTests {
         }
     }
 
-    /*@Test
+    @Test
     public void VoidTest(){
         Mutators.deleteTargetClasses(translator.getCtClasses());
-    }*/
+    }
 }
