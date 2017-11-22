@@ -47,8 +47,6 @@ public class App
                 Request request = Request.aClass(ctClass.toClass());
                 Result r = jUnitCore.run(request);
                 System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
-                //System.out.println(r.getFailures());
-                //System.out.println(r.wasSuccessful());
             }
 
         }
@@ -58,6 +56,5 @@ public class App
             System.out.println(exc.getMessage());
             exc.printStackTrace();
         }
-
     }
 }
