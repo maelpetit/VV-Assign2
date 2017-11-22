@@ -15,13 +15,14 @@ public class MyTranslator implements Translator {
     public void onLoad(ClassPool classPool, String className) throws NotFoundException, CannotCompileException {
         if(className.contains("Addition")){
             CtClass ctClass = classPool.get(className);
+
+            System.out.println(ctClass.getDeclaredMethods());
             CtMethod ctMethod = ctClass.getDeclaredMethod("operate");
-            ctMethod.setName("operateBis");
             System.out.println(ctMethod.getLongName());
             ctMethod.instrument(new ExprEditor() {
                 @Override
                 public void edit(FieldAccess f) throws CannotCompileException {
-                    f.replace("{ System.out.println(\"operateBis called\"); $_ = $proceed($$); }");
+                    f.replace("{ System.out.println(\"operate called\"); $_ = $proceed($$); }");
                 }
             });
             try {
