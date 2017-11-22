@@ -1,29 +1,22 @@
 package fr.istic.vv;
 
 import javassist.*;
-import javassist.expr.ExprEditor;
-import javassist.expr.FieldAccess;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MyTranslator implements Translator {
 
+    private Set<CtClass> ctClasses = new HashSet<CtClass>();
+
     public void start(ClassPool classPool) throws NotFoundException, CannotCompileException {
-        System.out.println("Starting");
     }
 
     public void onLoad(ClassPool classPool, String className) throws NotFoundException, CannotCompileException {
-        if(className.contains("Addition")){
-            CtClass ctClass = classPool.get(className);
-            ctClass = Mutators.replaceReturnInDoubleMethods(ctClass);
-            CtMethod ctMethod = ctClass.getDeclaredMethod("operate");
-            System.out.println(ctMethod.getLongName());
-            try {
-                ctClass.writeFile("target/classes");
-                System.out.println("written ");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        ctClasses.add(classPool.get(className));
+    }
+
+    public Set<CtClass> getCtClasses() {
+        return ctClasses;
     }
 }

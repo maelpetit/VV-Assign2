@@ -42,12 +42,12 @@ public class App
                     "fr.istic.vv.MultiplicationTest",
                     "fr.istic.vv.DivisionTest",
                     "fr.istic.vv.SubtractionTest"};
-            for(CtClass ctClass : pool.get(classes)){
+            /*for(CtClass ctClass : pool.get(classes)){
                 System.out.println("test: "+ ctClass.getName());
                 Request request = Request.aClass(ctClass.toClass());
                 Result r = jUnitCore.run(request);
                 System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
-            }
+            }*/
 
         }
 
