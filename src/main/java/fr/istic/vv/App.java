@@ -30,8 +30,8 @@ public class App
 
             Loader loader = new Loader(pool);
             Translator translator = new MyTranslator();
-            File classDir = new File("../TargetProject/target/classes");
-            File testDir = new File("../TargetProject/target/test-classes");
+            File classDir = new File("TargetProject/target/classes");
+            File testDir = new File("TargetProject/target/test-classes");
             loader.addTranslator(pool, translator);
             pool.appendClassPath(classDir.getPath());
             pool.appendClassPath(testDir.getPath());

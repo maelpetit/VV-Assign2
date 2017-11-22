@@ -1,0 +1,3 @@
+[submodule "TargetProject"]
+	path = TargetProject
+	url = git://github.com/maelpetit/TargetProject.git
