@@ -6,16 +6,25 @@ import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Mutators {
 
-    public static CtClass replaceReturnInDoubleMethods(CtClass ctClass){
+    public static Set<CtClass> save = new HashSet<CtClass>();
+
+    public static CtClass replaceReturnInDoubleMethods(CtClass ctClass) throws CannotCompileException, ClassNotFoundException, NotFoundException {
         if(ctClass.isInterface()){
             return ctClass;
         }
+        CtClass ctClassCopy = ClassPool.getDefault().getAndRename(ctClass.getName(), ctClass.getName() + "Copy");
+        ctClassCopy.defrost();
+        ctClassCopy.toClass();
+        save.add(ctClassCopy);
         for(CtMethod ctMethod : ctClass.getDeclaredMethods()){
-            try {
                 if(ctMethod.getReturnType().getName().equals("double")){
                     ctMethod.instrument(new ExprEditor() {
                         @Override
@@ -24,13 +33,6 @@ public class Mutators {
                         }
                     });
                 }
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e){
-                e.printStackTrace();
-            } catch (CannotCompileException e) {
-                e.printStackTrace();
-            }
         }
 
         return ctClass;
@@ -104,6 +106,18 @@ public class Mutators {
                     currentFile.delete();
                 }
             }
+        }
+    }
+
+    public static void restoreClasses(Set<CtClass> classes, String targetDir) throws CannotCompileException, NotFoundException, IOException, ClassNotFoundException {
+        for(CtClass ctClass : classes){
+            ctClass.defrost();
+        }
+        for(CtClass ctClass : save){
+            ctClass.defrost();
+            ctClass.setName(ctClass.getName().substring(0, ctClass.getName().length() - 4));
+            ctClass.writeFile(targetDir);
+            ctClass.getClassPool().getClassLoader().loadClass(ctClass.getName());
         }
     }
 }

@@ -3,7 +3,6 @@ package fr.istic.vv;
 import javassist.*;
 import javassist.bytecode.BadBytecode;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -13,7 +12,6 @@ import org.junit.runner.Result;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,14 +50,21 @@ public class MutateTests {
         int i = 0;
         for(CtClass classToReload : translator.getCtClasses()){
             urls[i++] = classToReload.getURL();
+            System.out.println(urls[i-1]);
         }
 
         //TODO copy .class files in temp folder to restore them after each test
     }
 
-    @After
+    @Test
+    public void run() throws NotFoundException, CannotCompileException, IOException, InterruptedException {
+        JavaProcess.exec(testClasses.iterator().next());
+    }
+
+    //@After
     public void afterTest() throws Throwable {
         Mutators.deleteTargetClasses(translator.getCtClasses());
+        Mutators.restoreClasses(translator.getCtClasses(), targetDir);
         /*URLClassLoader cl = new URLClassLoader(urls, MutateTests.class.getClassLoader()) ;
         for(CtClass ctClass : translator.getCtClasses()){
             Class myClass = cl.loadClass(ctClass.getName());
@@ -67,13 +72,12 @@ public class MutateTests {
     }
 
     @Test
-    public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException {
+    public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
         System.out.println("MutateTests.replaceReturnInDoubleMethodsTest");
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
             Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(targetDir);
         }
-        runTests();
     }
 
     @Test
@@ -83,7 +87,6 @@ public class MutateTests {
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, true).writeFile(targetDir);
         }
-        runTests();
     }
 
     @Test
@@ -93,7 +96,6 @@ public class MutateTests {
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, false).writeFile(targetDir);
         }
-        runTests();
     }
 
     @Test
@@ -103,20 +105,5 @@ public class MutateTests {
             ctClass.defrost();
             Mutators.arithmeticMutations(ctClass).writeFile(targetDir);
         }
-        runTests();
     }
-
-    private void runTests() throws NotFoundException, CannotCompileException {
-        for(Class testClass : testClasses){
-            System.out.println("test: "+ testClass.getName());
-            Request request = Request.aClass(testClass);
-            Result r = jUnitCore.run(request);
-            System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
-        }
-    }
-
-    /*@Test
-    public void VoidTest(){
-        Mutators.deleteTargetClasses(translator.getCtClasses());
-    }*/
 }
