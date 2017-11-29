@@ -14,16 +14,10 @@ import java.util.Set;
 
 public class Mutators {
 
-    public static Set<CtClass> save = new HashSet<CtClass>();
-
     public static CtClass replaceReturnInDoubleMethods(CtClass ctClass) throws CannotCompileException, ClassNotFoundException, NotFoundException {
         if(ctClass.isInterface()){
             return ctClass;
         }
-        CtClass ctClassCopy = ClassPool.getDefault().getAndRename(ctClass.getName(), ctClass.getName() + "Copy");
-        ctClassCopy.defrost();
-        ctClassCopy.toClass();
-        save.add(ctClassCopy);
         for(CtMethod ctMethod : ctClass.getDeclaredMethods()){
                 if(ctMethod.getReturnType().getName().equals("double")){
                     ctMethod.instrument(new ExprEditor() {
@@ -106,18 +100,6 @@ public class Mutators {
                     currentFile.delete();
                 }
             }
-        }
-    }
-
-    public static void restoreClasses(Set<CtClass> classes, String targetDir) throws CannotCompileException, NotFoundException, IOException, ClassNotFoundException {
-        for(CtClass ctClass : classes){
-            ctClass.defrost();
-        }
-        for(CtClass ctClass : save){
-            ctClass.defrost();
-            ctClass.setName(ctClass.getName().substring(0, ctClass.getName().length() - 4));
-            ctClass.writeFile(targetDir);
-            ctClass.getClassPool().getClassLoader().loadClass(ctClass.getName());
         }
     }
 }
