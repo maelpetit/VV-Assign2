@@ -1,5 +1,7 @@
 package fr.istic.vv;
 
+import fr.istic.vv.log.FileLog;
+import org.junit.BeforeClass;
 import javassist.*;
 import javassist.bytecode.BadBytecode;
 import org.junit.After;
@@ -42,7 +44,7 @@ public class MutateTests {
 
     @Test
     public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
-        System.out.println("MutateTests.replaceReturnInDoubleMethodsTest");
+        FileLog.log("MutateTests.replaceReturnInDoubleMethodsTest");
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
             Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(targetDir);
@@ -51,7 +53,7 @@ public class MutateTests {
 
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
-        System.out.println("MutateTests.setBooleanMethodsToTrue");
+        FileLog.log("MutateTests.setBooleanMethodsToTrue");
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, true).writeFile(targetDir);
@@ -60,7 +62,7 @@ public class MutateTests {
 
     @Test
     public void setBooleanMethodsToFalse() throws NotFoundException, CannotCompileException, IOException {
-        System.out.println("MutateTests.setBooleanMethodsToFalse");
+        FileLog.log("MutateTests.setBooleanMethodsToFalse");
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, false).writeFile(targetDir);
@@ -69,7 +71,7 @@ public class MutateTests {
 
     @Test
     public void arithmeticMutationsTest() throws BadBytecode, CannotCompileException, IOException, NotFoundException {
-        System.out.println("MutateTests.arithmeticMutationsTest");
+        FileLog.log("MutateTests.arithmeticMutationsTest");
         for(CtClass ctClass : translator.getCtClasses()){
             ctClass.defrost();
             Mutators.arithmeticMutations(ctClass).writeFile(targetDir);

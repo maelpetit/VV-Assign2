@@ -1,5 +1,6 @@
 package fr.istic.vv;
 
+import fr.istic.vv.log.FileLog;
 import javassist.*;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Request;
@@ -53,10 +54,10 @@ public class TestRunner {
 
     private void runTests() throws NotFoundException, CannotCompileException {
         for(Class testClass : testClasses){
-            System.out.println("test: "+ testClass.getName());
+            FileLog.log("test: "+ testClass.getName());
             Request request = Request.aClass(testClass);
             Result r = jUnitCore.run(request);
-            System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
+            FileLog.log("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
         }
     }
 
@@ -66,9 +67,13 @@ public class TestRunner {
 
     public static void main(String[] args) throws Throwable {
         String projectDir ="TargetProject";
+        FileLog FileLog = new FileLog();
         if(args.length > 2){
             projectDir = args[0];
         }
+
+        //FileLog
+        FileLog.writeLog("FileLog");
 
         TestRunner testRunner = new TestRunner(projectDir);
         testRunner.runTests();
