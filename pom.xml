@@ -41,7 +41,4 @@
         </plugin>
     </plugins>
   </build>
-  <modules>
-    <module>TargetProject</module>
-  </modules>
 </project>
