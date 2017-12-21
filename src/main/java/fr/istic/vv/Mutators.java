@@ -5,6 +5,7 @@ import javassist.bytecode.*;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,35 +20,41 @@ public class Mutators {
             return ctClass;
         }
         for(CtMethod ctMethod : ctClass.getDeclaredMethods()){
-                if(ctMethod.getReturnType().getName().equals("double")){
-                    ctMethod.instrument(new ExprEditor() {
-                        @Override
-                        public void edit(FieldAccess f) throws CannotCompileException {
-                            f.replace("{ $_ = 0; }");
-                        }
-                    });
-                }
+            if(ctMethod.getReturnType().getName().equals("double")){
+                ctMethod.instrument(new ExprEditor() {
+                    @Override
+                    public void edit(FieldAccess f) throws CannotCompileException {
+                        f.replace("{ $_ = 0; }");
+                    }
+                });
+            }
         }
 
         return ctClass;
     }
 
     public static CtClass setBooleanMethodsTo(CtClass ctClass, final boolean bool){
-        if(ctClass.isInterface()){
-            return ctClass;
-        }
-        for(CtMethod ctMethod : ctClass.getDeclaredMethods()){
-            try {
-                if(ctMethod.getReturnType().getName().equals("boolean")){
-                    ctMethod.setBody("return " + bool + ";");
-                }
-            } catch (NotFoundException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e){
-                e.printStackTrace();
-            } catch (CannotCompileException e) {
-                e.printStackTrace();
+        try{
+            if(ctClass.isInterface()){
+                return ctClass;
             }
+
+            for(CtMethod ctMethod : ctClass.getDeclaredMethods()){
+                try {
+                    if(ctMethod.getReturnType().getName().equals("boolean")){
+                        ctMethod.setBody("return " + bool + ";");
+                        System.out.println("Mutators.setBooleanMethodsTo body modified");
+                    }
+                } catch (NotFoundException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e){
+                    e.printStackTrace();
+                } catch (CannotCompileException e) {
+                    e.printStackTrace();
+                }
+            }
+        }catch(RuntimeException e){
+            e.printStackTrace();
         }
         return ctClass;
     }
@@ -91,15 +98,15 @@ public class Mutators {
         return ctMethod;
     }
 
-    public static void deleteTargetClasses(Set<CtClass> toDelete){
-        File target = new File("target/classes/fr/istic/vv");
-        for(String file : target.list()){
-            for(CtClass ctClass : toDelete){
-                if(file.contains(ctClass.getSimpleName())){
-                    File currentFile = new File(target.getPath(),file);
-                    currentFile.delete();
-                }
-            }
+    public static void deleteTargetClasses(Set<CtClass> toDelete, File classDir){
+        for(CtClass ctClass : toDelete){
+            ctClass.defrost();
+            String fileName = ctClass.getName().replace('.', '/') + ".class";
+            File file = new File(classDir + "/" + fileName);
+            System.out.println(file.getPath());
+            System.out.println(file.exists());
+            file.delete();
         }
+
     }
 }

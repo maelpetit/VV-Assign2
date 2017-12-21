@@ -20,7 +20,7 @@ public final class JavaProcess {
         String args = targetProjectPath;
 
         ProcessBuilder builder = new ProcessBuilder(
-                javaBin, "-cp", classpath, className).inheritIO();
+                javaBin, "-cp", classpath, className, args).inheritIO();
 
         Process process = builder.start();
         process.waitFor();
