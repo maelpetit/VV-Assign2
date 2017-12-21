@@ -21,24 +21,25 @@ public class MutateTests {
     static Loader loader;
     static MyTranslator translator;
     static String targetDir = "target/classes";
+    static String targetProjectDir = "E:/Documents/M2/V&V/TargetProject";
 
     @BeforeClass
     public static void initClass() throws Throwable {
         pool = ClassPool.getDefault();
         loader = new Loader(pool);
         translator = new MyTranslator();
-        File classDir = new File("TargetProject/target/classes");
-        File testDir = new File("TargetProject/target/test-classes");
+        File classDir = new File(targetProjectDir + "/target/classes");
+        File testDir = new File(targetProjectDir + "/target/test-classes");
         loader.addTranslator(pool, translator);
         pool.appendClassPath(classDir.getPath());
         pool.appendClassPath(testDir.getPath());
-        loader.run("fr.istic.vv.TargetApp", null);
+        //loader.run("fr.istic.vv.TargetApp", null);
 
     }
 
     @After
     public void run() throws NotFoundException, CannotCompileException, IOException, InterruptedException {
-        JavaProcess.exec(TestRunner.class);
+        JavaProcess.exec(TestRunner.class, targetProjectDir);
         Mutators.deleteTargetClasses(translator.getCtClasses());
     }
 

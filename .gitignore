@@ -15,3 +15,5 @@ vv-assign3\.iml
 \.idea/
 
 TargetProject
+
+*.log

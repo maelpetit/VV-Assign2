@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class FileLog {
 
@@ -13,7 +14,7 @@ public class FileLog {
         return ourInstance;
     }
 
-    public FileLog() {
+    private FileLog() {
     }
 
     private String content = "";
@@ -32,8 +33,9 @@ public class FileLog {
 
     public static void writeLog(String fileName){
         FileLog instance = getInstance();
+        String projectDir = System.getProperty("user.dir");
         try {
-            File file = new File("logs/" + fileName + "-" + LocalDateTime.now().toString() + ".log");
+            File file = new File(projectDir + "/logs/" + fileName + "-" + LocalDateTime.now().toString().replace(':', '_') + ".log");
             file.createNewFile();
             FileWriter fw = new FileWriter(file);
             instance.content = "LogFile : \n - Tests : \n"+ instance.content ;

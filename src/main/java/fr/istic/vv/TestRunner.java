@@ -8,7 +8,9 @@ import org.junit.runner.Result;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class TestRunner {
@@ -32,7 +34,9 @@ public class TestRunner {
             pool.appendClassPath(testDir.getPath());
 
             jUnitCore = new JUnitCore();
-            String[] _testClasses = testDir.list();
+
+            String[] _testClasses = findTestClasses(testDir, "").toArray(new String[0]);
+
             for(CtClass ctClass : pool.get(_testClasses)){
                 testClasses.add(ctClass.toClass());
             }
@@ -54,29 +58,37 @@ public class TestRunner {
 
     private void runTests() throws NotFoundException, CannotCompileException {
         for(Class testClass : testClasses){
-            FileLog.log("test: "+ testClass.getName());
-            Request request = Request.aClass(testClass);
-            Result r = jUnitCore.run(request);
-            FileLog.log("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
+//            FileLog.log("test: "+ testClass.getName());
+            System.out.println("test: "+ testClass.getName());
+            Result r = jUnitCore.run(testClass);
+//            FileLog.log("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
+            System.out.println("Tests ran : " + r.getRunCount() + ", failed : " + r.getFailureCount());
         }
     }
 
-    private void findTestClasses(String testDir){
-
+    private List<String> findTestClasses(File testDir, String pkg){
+        List<String> res = new ArrayList<>();
+        for(File file : testDir.listFiles()){
+            if(file.isFile()){
+                String fileName = file.getName();
+                res.add(pkg + fileName.substring(0, fileName.length() - 6));
+            }else if(file.isDirectory()){
+                res.addAll(findTestClasses(file, pkg + file.getName() + "."));
+            }
+        }
+        return res;
     }
 
     public static void main(String[] args) throws Throwable {
-        String projectDir ="TargetProject";
-        FileLog FileLog = new FileLog();
-        if(args.length > 2){
+        String projectDir ="E:/Documents/M2/V&V/TargetProject";
+        if(args.length > 1){
             projectDir = args[0];
         }
 
-        //FileLog
-        FileLog.writeLog("FileLog");
-
         TestRunner testRunner = new TestRunner(projectDir);
         testRunner.runTests();
+
+//        FileLog.writeLog("TestRunner");
     }
 
 
