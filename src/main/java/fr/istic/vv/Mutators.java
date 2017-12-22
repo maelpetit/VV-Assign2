@@ -15,6 +15,8 @@ import java.util.Set;
 
 public class Mutators {
 
+    public static boolean HAS_MUTATED;
+
     public static CtClass replaceReturnInDoubleMethods(CtClass ctClass) throws CannotCompileException, ClassNotFoundException, NotFoundException {
         if(ctClass.isInterface()){
             return ctClass;
@@ -28,6 +30,8 @@ public class Mutators {
                     }
                 });
                 System.out.println("Mutators.replaceReturnInDoubleMethods return 0");
+                HAS_MUTATED = true;
+
             }
         }
 
@@ -44,6 +48,8 @@ public class Mutators {
                 try {
                     if(ctMethod.getReturnType().getName().equals("boolean")){
                         ctMethod.setBody("return " + bool + ";");
+                        System.out.println("Mutators.setBooleanMethodsTo " + bool);
+                        HAS_MUTATED = true;
                     }
                 } catch (NotFoundException | NullPointerException | CannotCompileException e) {
                     e.printStackTrace();
@@ -76,6 +82,7 @@ public class Mutators {
                 if(codeIterator.byteAt(pos) == oldBytecode){
                     codeIterator.writeByte(newBytecode, pos);
                     System.out.println("Mutators.replace bytecode " + oldBytecode + " -> " + newBytecode);
+                    HAS_MUTATED = true;
                 }
             }
         }catch(Exception e){
@@ -90,6 +97,8 @@ public class Mutators {
             ctClass.defrost();
             String fileName = ctClass.getName().replace('.', '/') + ".class";
             File file = new File(classDir + "/" + fileName);
+            System.out.println(file.getPath());
+            System.out.println(file.exists());
             file.delete();
         }
 

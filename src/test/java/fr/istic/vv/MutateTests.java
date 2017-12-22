@@ -25,15 +25,12 @@ public class MutateTests {
     static ClassPool pool;
     static Loader loader;
     static Set<CtClass> classes = new HashSet<>();
-    static String targetDir = "target/classes";
-    // TODO : Remodifier le path avant de commit !
-    static String targetProjectDir = "/home/paget/dev/TargetProject";
+    static String targetProjectDir = PropertiesLoader.getTargetProject();
     static File classDir;
 
     @BeforeClass
     public static void initClass() throws Throwable {
-        // TODO : Remodifier le path avant de commit !
-        System.setProperty("maven.home", "/usr/local/apache-maven-3.5.0");
+        System.setProperty("maven.home", PropertiesLoader.getMavenHome());
         pool = ClassPool.getDefault();
         loader = new Loader(pool);
         classDir = new File(targetProjectDir + "/target/classes");
@@ -74,11 +71,15 @@ public class MutateTests {
         } catch (MavenInvocationException e) {
             e.printStackTrace();
         }
+
+        Mutators.HAS_MUTATED = false;
     }
 
     @After
     public void run() throws NotFoundException, CannotCompileException, IOException, InterruptedException {
-        JavaProcess.exec(TestRunner.class, targetProjectDir);
+        if(Mutators.HAS_MUTATED){
+            JavaProcess.exec(TestRunner.class, targetProjectDir);
+        }
         Mutators.deleteTargetClasses(classes, classDir);
     }
 
@@ -93,7 +94,6 @@ public class MutateTests {
 
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
-        logger.info(System.getProperty("user.dir")) ;
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
         for(CtClass ctClass : classes){
             ctClass.defrost();
@@ -111,20 +111,44 @@ public class MutateTests {
     }
 
     @Test
-    public void arithmeticMutationsTest() throws BadBytecode, CannotCompileException, IOException, NotFoundException {
-        FileLog.log("MutateTests.arithmeticMutationsTest");
-        int[] byteCodes = {
-                Opcode.DADD, Opcode.DSUB,
-                Opcode.DSUB, Opcode.DADD,
-                Opcode.DMUL, Opcode.DDIV,
-                Opcode.DDIV, Opcode.DMUL,
-                Opcode.DCMPG, Opcode.DCMPL,
-                Opcode.DCMPL, Opcode.DCMPG
-        };
-        for(int i = 0; i < byteCodes.length - 1; i += 2) {
-            for (CtClass ctClass : classes) {
-                ctClass.defrost();
-                Mutators.replace(ctClass, byteCodes[i], byteCodes[i + 1]).writeFile(classDir.getPath());
+    public void addToSub(){
+        replaceInClasses(Opcode.DADD, Opcode.DSUB);
+    }
+
+    @Test
+    public void subToAdd(){
+        replaceInClasses(Opcode.DSUB, Opcode.DADD);
+    }
+
+    @Test
+    public void mulToDiv(){
+        replaceInClasses(Opcode.DMUL, Opcode.DDIV);
+    }
+
+    @Test
+    public void divToMul(){
+        replaceInClasses(Opcode.DDIV, Opcode.DMUL);
+    }
+
+    @Test
+    public void greaterToLower(){
+        replaceInClasses( Opcode.DCMPG, Opcode.DCMPL);
+    }
+
+    @Test
+    public void lowerToGreater(){
+        replaceInClasses(Opcode.DCMPL, Opcode.DCMPG);
+    }
+
+    private void replaceInClasses(int oldByteCode, int newByteCode){
+        for (CtClass ctClass : classes) {
+            ctClass.defrost();
+            try {
+                Mutators.replace(ctClass, oldByteCode, newByteCode).writeFile(classDir.getPath());
+            } catch (CannotCompileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

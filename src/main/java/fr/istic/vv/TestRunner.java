@@ -14,26 +14,19 @@ import java.util.*;
 public class TestRunner {
 
     private ClassPool pool;
-    private Loader loader;
-    //private MyTranslator translator;
-    private JUnitCore jUnitCore;
     private Set<Class> testClasses = new HashSet<Class>();
     private String projectDir;
-    private URL[] urls;
     private boolean allTestPassed;
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     private TestRunner(String projectPath){
         projectDir = projectPath;
         pool = ClassPool.getDefault();
-        loader = new Loader(pool);
         File classDir = new File(projectPath + "/target/classes");
         File testDir = new File(projectPath + "/target/test-classes");
         try {
             pool.appendClassPath(classDir.getPath());
             pool.appendClassPath(testDir.getPath());
-
-            jUnitCore = new JUnitCore();
 
             String[] _testClasses = findTestClasses(testDir, "").toArray(new String[0]);
 
@@ -41,7 +34,7 @@ public class TestRunner {
                 try {
                     testClasses.add(ctClass.toClass());
                 }catch(CannotCompileException e){
-                    //e.printStackTrace();
+                    e.printStackTrace();
                 }
             }
 
@@ -62,7 +55,6 @@ public class TestRunner {
         InvocationResult result = invoker.execute( request );
         allTestPassed = result.getExitCode() == 0;
         if(allTestPassed ){
-            //tout les tests sont passé
             logger.info("Tous les tests sont passés avec succès");
         }
         else{
@@ -86,20 +78,12 @@ public class TestRunner {
 
     public static void main(String[] args) throws Throwable {
 
-
-        //TODO : Remodifier le path avant de commit !
-        String projectDir = "/home/paget/dev/TargetProject";//"/home/paget/dev/TargetProject"; /home/mael/M2/VetV/TargetProject" // demander pour le projet commons-cli
-        System.setProperty("maven.home", "/usr/local/apache-maven-3.5.0"); // chemin mael : "/home/mael/Applications...
         if(args.length > 0){
-            projectDir = args[0];
+            System.setProperty("maven.home", PropertiesLoader.getMavenHome());
+            String projectDir = args[0];
+            TestRunner testRunner = new TestRunner(projectDir);
+            testRunner.runTests();
         }
-
-        // FileLog
-        //FileLog.writeLog("FileLog");
-
-        TestRunner testRunner = new TestRunner(projectDir);
-        testRunner.runTests();
-        //FileLog.writeLog("TestRunner");
     }
 
 
