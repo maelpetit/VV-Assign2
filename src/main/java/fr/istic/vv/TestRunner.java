@@ -4,7 +4,6 @@ import fr.istic.vv.log.FileLog;
 import fr.istic.vv.report.ReportServiceImpl;
 import javassist.*;
 import org.apache.maven.shared.invoker.*;
-import org.junit.runner.JUnitCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,12 +52,7 @@ public class TestRunner {
 
     private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException, IOException {
 
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile( new File( projectDir + "/pom.xml" ) );
-        request.setGoals( Collections.singletonList( "surefire:test" ) );
-
-        Invoker invoker = new DefaultInvoker();
-        InvocationResult result = invoker.execute( request );
+        InvocationResult result = MavenUtil.execGoals("surefire:test", projectDir);
         allTestPassed = result.getExitCode() == 0;
         if(allTestPassed ){
             logger.info("Tous les tests sont passés avec succès");

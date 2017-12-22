@@ -44,6 +44,7 @@ public class MutateTests {
         pool.appendClassPath(classDir.getPath());
         pool.appendClassPath(testDir.getPath());
         classes = findClasses(classDir, "");
+
     }
 
     private static Set<CtClass> findClasses(File dir, String pkg) {
@@ -66,17 +67,11 @@ public class MutateTests {
 
     @Before
     public void recompile(){
-        InvocationRequest request = new DefaultInvocationRequest();
-        request.setPomFile( new File( targetProjectDir + "/pom.xml" ) );
-        request.setGoals( Collections.singletonList( "compile" ) );
-
-        Invoker invoker = new DefaultInvoker();
         try {
-            invoker.execute(request);
+            MavenUtil.execGoals("compile", targetProjectDir);
         } catch (MavenInvocationException e) {
             e.printStackTrace();
         }
-
         Mutators.HAS_MUTATED = false;
     }
 
@@ -123,31 +118,37 @@ public class MutateTests {
 
     @Test
     public void addToSub(){
+        logger.info("MutateTests.addToSub");
         replaceInClasses(Opcode.DADD, Opcode.DSUB);
     }
 
     @Test
     public void subToAdd(){
+        logger.info("MutateTests.subToAdd");
         replaceInClasses(Opcode.DSUB, Opcode.DADD);
     }
 
     @Test
     public void mulToDiv(){
+        logger.info("MutateTests.mulToDiv");
         replaceInClasses(Opcode.DMUL, Opcode.DDIV);
     }
 
     @Test
     public void divToMul(){
+        logger.info("MutateTests.divToMul");
         replaceInClasses(Opcode.DDIV, Opcode.DMUL);
     }
 
     @Test
     public void greaterToLower(){
+        logger.info("MutateTests.greaterToLower");
         replaceInClasses( Opcode.DCMPG, Opcode.DCMPL);
     }
 
     @Test
     public void lowerToGreater(){
+        logger.info("MutateTests.lowerToGreater");
         replaceInClasses(Opcode.DCMPL, Opcode.DCMPG);
     }
 
