@@ -61,6 +61,30 @@ public class Mutators {
         return ctClass;
     }
 
+    public static CtClass removeBodyInVoidMethods(CtClass ctClass){
+        try{
+            if(ctClass.isInterface()){
+                return ctClass;
+            }
+
+            for(CtMethod ctMethod : ctClass.getDeclaredMethods()){
+                try {
+                    if(ctMethod.getReturnType().getName().equals("void")){
+                        ctMethod.setBody("{}");
+                        System.out.println("Mutators.removeBodyInVoidMethods");
+                        HAS_MUTATED = true;
+                    }
+                } catch (NotFoundException | NullPointerException | CannotCompileException e) {
+                    e.printStackTrace();
+                    System.out.println(ctMethod.getLongName());
+                }
+            }
+        }catch(RuntimeException e){
+            e.printStackTrace();
+        }
+        return ctClass;
+    }
+
     public static CtClass replace(CtClass ctClass, int oldBytecode, int newBytecode){
         if(ctClass.isInterface()){
             return ctClass;

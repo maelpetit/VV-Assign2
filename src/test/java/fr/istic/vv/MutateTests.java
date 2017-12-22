@@ -76,9 +76,13 @@ public class MutateTests {
     }
 
     @After
-    public void run() throws NotFoundException, CannotCompileException, IOException, InterruptedException {
+    public void run() {
         if(Mutators.HAS_MUTATED){
-            JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
+            try {
+                JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         else{
             String[] projectPath = targetProjectDir.split("/");
@@ -88,32 +92,48 @@ public class MutateTests {
     }
 
     @Test
-    public void replaceReturnInDoubleMethods() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
+    public void replaceReturnInDoubleMethods(){
         logger.info("Mutateur utilisé : MutateTests.replaceReturnInDoubleMethods");
         currentMutation = "replaceReturnInDoubleMethods" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
-            Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(classDir.getPath());
+            try {
+                Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(classDir.getPath());
+            } catch (CannotCompileException | IOException | ClassNotFoundException | NotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Test
-    public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
+    public void setBooleanMethodsToTrue(){
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
         currentMutation = "SetBooleanMethodsToTrue" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
-            Mutators.setBooleanMethodsTo(ctClass, true).writeFile(classDir.getPath());
+            try {
+                Mutators.setBooleanMethodsTo(ctClass, true).writeFile(classDir.getPath());
+            } catch (CannotCompileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Test
-    public void setBooleanMethodsToFalse() throws NotFoundException, CannotCompileException, IOException {
+    public void setBooleanMethodsToFalse(){
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToFalse");
         currentMutation = "setBooleanMethodsToFalse" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
-            Mutators.setBooleanMethodsTo(ctClass, false).writeFile(classDir.getPath());
+            try {
+                Mutators.setBooleanMethodsTo(ctClass, false).writeFile(classDir.getPath());
+            } catch (CannotCompileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -164,6 +184,20 @@ public class MutateTests {
             ctClass.defrost();
             try {
                 Mutators.replace(ctClass, oldByteCode, newByteCode).writeFile(classDir.getPath());
+            } catch (CannotCompileException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void removeBodyInVoidMethods(){
+        for(CtClass ctClass : classes){
+            ctClass.defrost();
+            try {
+                Mutators.removeBodyInVoidMethods(ctClass).writeFile(classDir.getPath());
             } catch (CannotCompileException e) {
                 e.printStackTrace();
             } catch (IOException e) {

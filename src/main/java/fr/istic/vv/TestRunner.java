@@ -7,8 +7,7 @@ import org.apache.maven.shared.invoker.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URL;
+import java.io.File;
 import java.util.*;
 import fr.istic.vv.report.Report;
 import fr.istic.vv.report.ReportService;
@@ -49,7 +48,7 @@ public class TestRunner {
 
     }
 
-    private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException, IOException {
+    private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException {
 
         InvocationResult result = MavenUtil.execGoals("surefire:test", projectDir);
         allTestPassed = result.getExitCode() == 0;
