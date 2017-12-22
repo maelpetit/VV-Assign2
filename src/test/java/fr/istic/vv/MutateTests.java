@@ -59,25 +59,22 @@ public class MutateTests {
 
     @Before
     public void recompile(){
-        try {
-            MavenUtil.execGoals("compile", targetProjectDir);
-        } catch (MavenInvocationException e) {
-            e.printStackTrace();
-        }
+        MavenUtil.execGoals("compile", targetProjectDir, false);
         Mutators.HAS_MUTATED = false;
     }
 
     @After
     public void run() {
+        String[] projectPath = targetProjectDir.split("/");
         if(Mutators.HAS_MUTATED){
             try {
-                JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
+                int exitValue = JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
+                FileLog.writeLog( projectPath[projectPath.length-1], currentMutation + "#####" + exitValue);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
         else{
-            String[] projectPath = targetProjectDir.split("/");
             FileLog.writeLog( projectPath[projectPath.length-1] , currentMutation + ";" + "false" + ";" + "true" + ";\n") ;
         }
         Mutators.deleteTargetClasses(classes, classDir);

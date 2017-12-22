@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,10 @@ public final class JavaProcess {
                 mutation
         };
 
-        ProcessBuilder builder = new ProcessBuilder(COMMAND);
+        ProcessBuilder builder = new ProcessBuilder(COMMAND).inheritIO();
         builder.redirectErrorStream(true);
         Process process = builder.start();
-        BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        /*BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = in.readLine()) != null) {
             if(line.contains("[INFO]") || line.contains("[ERROR]") || line.contains("	at")){
@@ -47,9 +48,9 @@ public final class JavaProcess {
             else {
                 logger.info(line);
             }
-        }
-
+        }*/
         process.waitFor();
+        process.destroy();
         return process.exitValue();
     }
 

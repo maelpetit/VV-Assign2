@@ -14,7 +14,7 @@ public class TestRunner {
     private ClassPool pool;
     private Set<Class> testClasses = new HashSet<Class>();
     private String projectDir;
-    private boolean allTestPassed;
+    private int allTestPassed; //0 = all tests passed, 1 = some failed, -1 = infinite loop
     private String mutation;
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
@@ -47,16 +47,16 @@ public class TestRunner {
 
     private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException {
 
-        InvocationResult result = MavenUtil.execGoals("surefire:test", projectDir);
-        allTestPassed = result.getExitCode() == 0;
-        if(allTestPassed ){
+        allTestPassed = MavenUtil.execGoals("surefire:test", projectDir, true);
+        if(allTestPassed == 0){
             logger.info("Tous les tests sont passés avec succès");
         }
         else{
             logger.info("Erreur dans les tests, voir details au dessus");
         }
         String[] projectPath = projectDir.split("/");
-        FileLog.writeLog( projectPath[projectPath.length-1]  ,  mutation + ";" + "true" + ";" + allTestPassed + ";\n" ) ;
+        String result = allTestPassed == 0 ? "true" : allTestPassed > 0 ? "false" : "undefined";
+        FileLog.writeLog( projectPath[projectPath.length-1]  ,  mutation + ";" + "true" + ";" + result + ";\n" ) ;
 
     }
 
