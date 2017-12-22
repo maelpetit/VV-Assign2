@@ -27,6 +27,7 @@ public class MutateTests {
     static Set<CtClass> classes = new HashSet<>();
     static String targetProjectDir = PropertiesLoader.getTargetProject();
     static File classDir;
+    static String currentMutation;
 
     @BeforeClass
     public static void initClass() throws Throwable {
@@ -78,7 +79,7 @@ public class MutateTests {
     @After
     public void run() throws NotFoundException, CannotCompileException, IOException, InterruptedException {
         if(Mutators.HAS_MUTATED){
-            JavaProcess.exec(TestRunner.class, targetProjectDir);
+            JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
         }
         Mutators.deleteTargetClasses(classes, classDir);
     }

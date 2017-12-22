@@ -17,10 +17,12 @@ public class TestRunner {
     private Set<Class> testClasses = new HashSet<Class>();
     private String projectDir;
     private boolean allTestPassed;
+    private String mutation;
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
-    private TestRunner(String projectPath){
+    private TestRunner(String projectPath, String mutation){
         projectDir = projectPath;
+        this.mutation = mutation;
         pool = ClassPool.getDefault();
         File classDir = new File(projectPath + "/target/classes");
         File testDir = new File(projectPath + "/target/test-classes");
@@ -80,9 +82,13 @@ public class TestRunner {
 
         if(args.length > 0){
             System.setProperty("maven.home", PropertiesLoader.getMavenHome());
-            String projectDir = args[0];
-            TestRunner testRunner = new TestRunner(projectDir);
+            String[] arguments = args[0].split("%@%");
+            String projectDir = arguments[0];
+            String mutation = arguments[1];
+            TestRunner testRunner = new TestRunner(projectDir, mutation);
             testRunner.runTests();
+        }else {
+            System.out.println("Missing argument");
         }
     }
 

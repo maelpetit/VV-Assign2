@@ -13,7 +13,7 @@ public class PropertiesLoader {
 
     private PropertiesLoader() {
         try {
-            input = new FileInputStream("config.properties");
+            input = new FileInputStream("src/main/resources/config.properties");
             prop.load(input);
         } catch (java.io.IOException e) {
             e.printStackTrace();

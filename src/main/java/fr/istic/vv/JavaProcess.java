@@ -16,7 +16,7 @@ public final class JavaProcess {
 
     private JavaProcess() {}
 
-    public static int exec(Class klass, String targetProjectPath) throws IOException,
+    public static int exec(Class klass, String targetProjectPath, String mutation) throws IOException,
             InterruptedException {
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome +
@@ -24,16 +24,23 @@ public final class JavaProcess {
                 File.separator + "java";
         String classpath = System.getProperty("java.class.path");
         String className = klass.getCanonicalName();
-        String args = targetProjectPath;
 
-        ProcessBuilder builder = new ProcessBuilder(
-                javaBin, "-cp", classpath, className, args);
+        String[] COMMAND = {
+                javaBin,
+                "-cp",
+                classpath,
+                className,
+                targetProjectPath
+                + "%@%" +
+                mutation
+        };
+
+        ProcessBuilder builder = new ProcessBuilder(COMMAND);
         builder.redirectErrorStream(true);
         Process process = builder.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = in.readLine()) != null) {
-            //FileLog.log(line);
             if(line.contains("[INFO]") || line.contains("[ERROR]") || line.contains("	at")){
 
             }
@@ -41,7 +48,6 @@ public final class JavaProcess {
                 logger.info(line);
             }
         }
-        //FileLog.writeLog("JavaProcess");
 
         process.waitFor();
         return process.exitValue();
