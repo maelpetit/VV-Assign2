@@ -1,39 +1,31 @@
 # VV-Assign3 : How to use this project
 
-To start, we have to compile files from TargetProject's folder.
-So, compile this file :
+First run this command in the targeted project folder :
 
-  	TargetProject/src/main/java/fr/istic/vv/TargetApp.java
+  	mvn package -DskipTests
+  	
+Then in the config.properties file in src/main/resources, specify the targeted project path
+and the maven home path.
 
-## Folders 
+To run our program run this command:
+
+    mvn surefire:test -Dtest=MutateTests
+    
+Results are in the log/ folder as targetedProject.html.
+
+## Features 
  
- **_src :_** -> main/test/fr/istic/vv
-    <p>We have the test class MutateTests.java</p>
-
- **_TargetProject :_** 
-    <p>We use submodule from GitHub to add a target project in the Project</p>
-
- **_target :_** -> classes/fr/istic/vv 
-    <p>Mutated .class directory</p>
-
-## Fonctionnalités implémentées 
-
- ### Programme :
+ Here are the different mutations done by our program:
  
- Dans le projet /VV-Assign3/TargetProject
- 
-    > Création de nos classes arithmétiques (+,-,*,/)
-    > Test unitaire de chaque classe arithmétique
- 
-  Dans le projet /VV-Assign3
-  
-    > Les mutants implémentées sont:
-      
-     Remplacement de la valeur de retour par 0 dans les méthodes retournant un double
-     
-     Remplacement de la valeur de retour par TRUE ou FALSE dans les méthodes retournant un booléen
-     
- ## Problèmes
- 
- Lorsque on lance tous les tests de la classe MutateTests d'un coup, seul le premier test modifie le bytecode.
- Mais pas de soucis quand les tests sont lancés un par un.
+    1. '-' is replaced by +'
+    2. '+' is replaced by '-'
+    3. body of boolean methods replaced by 'return true'
+    4. body of boolean methods replaced by  'return false'
+    5. '<' is replaced by '>'
+    6. '>' is replaced by '<'
+    7. removed body of void methods
+    8. body of double methods replaced by 'return 0'
+    9. '/' is replaced by '*'
+    10. '*' is replaced by '/'
+    11. 'if==' is replaced by 'if!='
+    12. 'if!=' is replaced by 'if=='
