@@ -1,13 +1,16 @@
 package fr.istic.vv;
 
+import fr.istic.vv.log.FileLog;
+
 public class Main {
 
     public static void main(String[] args){
 //        System.setProperty("maven.home", "/home/mael/Applications/apache-maven-3.5.0");
 //        System.out.println(System.getProperty("maven.home"));
-        System.out.println("Main.main");
+        /*System.out.println("Main.main");
         for(String arg : args){
             System.out.println(arg);
-        }
+        }*/
+        FileLog.writeLog("bite", "mabite");
     }
 }

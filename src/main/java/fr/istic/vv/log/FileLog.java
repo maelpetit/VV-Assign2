@@ -8,47 +8,21 @@ import java.time.format.DateTimeFormatter;
 
 public class FileLog {
 
-    private static FileLog ourInstance = new FileLog();
-
-    public static FileLog getInstance() {
-        return ourInstance;
-    }
-
-    private FileLog() {
-    }
-
-    private String content = "";
-
-    public static void log(String message){
-        getInstance().content += message + "\n";
-    }
-
-    public static void log(Object object){
-        if(object == null){
-            log("null");
-        }else{
-            log(object.toString());
-        }
-    }
-
-    public static void writeLog(String fileName){
-        FileLog instance = getInstance();
+    public static void writeLog(String fileName, String message){
         String projectDir = System.getProperty("user.dir");
         try {
-            File file = new File(projectDir + "/logs/" + fileName + ".log"); //"-" + LocalDateTime.now().toString().replace(':', '_')
-            System.out.println("il est la !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-            System.out.println(projectDir + "/logs/" + fileName + "-" + LocalDateTime.now().toString().replace(':', '_') + ".log");
-            if (!file.getParentFile().exists())
+            File file = new File(projectDir + "/log/" + fileName + ".csv"); //"-" + LocalDateTime.now().toString().replace(':', '_')
+            if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
-            if (!file.exists())
+            }
+            if (!file.exists()) {
                 file.createNewFile();
-           // file.createNewFile();
-            FileWriter fw = new FileWriter(file);
-            instance.content = "LogFile : \n - Tests : \n"+ instance.content ;
-            fw.write(instance.content);
+            }
+            FileWriter fw = new FileWriter(file, true);
+            System.out.println(" on va ecrire ca : " + message);
+            fw.append(message);
             fw.flush();
             fw.close();
-            instance.content = "";
         } catch (IOException e) {
             e.printStackTrace();
         }

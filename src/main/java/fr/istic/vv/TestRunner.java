@@ -20,7 +20,6 @@ public class TestRunner {
     private String projectDir;
     private boolean allTestPassed;
     private String mutation;
-    private ReportService reportService = new ReportServiceImpl();
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     private TestRunner(String projectPath, String mutation){
@@ -60,10 +59,9 @@ public class TestRunner {
         else{
             logger.info("Erreur dans les tests, voir details au dessus");
         }
-        String fichiercsv = mutation + ";" + "true" + ";" + allTestPassed + ";\n" ;
-        reportService.addReport(new Report(allTestPassed), fichiercsv );
-        reportService.generateCSV(fichiercsv);
-        //br.close();
+        String[] projectPath = projectDir.split("/");
+        FileLog.writeLog( projectPath[projectPath.length-1]  ,  mutation + ";" + "true" + ";" + allTestPassed + ";\n" ) ;
+
     }
 
     private List<String> findTestClasses(File testDir, String pkg){

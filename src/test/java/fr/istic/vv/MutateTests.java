@@ -31,7 +31,6 @@ public class MutateTests {
     static String targetProjectDir = PropertiesLoader.getTargetProject();
     static File classDir;
     static String currentMutation;
-    private ReportService reportService = new ReportServiceImpl();
 
     @BeforeClass
     public static void initClass() throws Throwable {
@@ -44,7 +43,8 @@ public class MutateTests {
         pool.appendClassPath(classDir.getPath());
         pool.appendClassPath(testDir.getPath());
         classes = findClasses(classDir, "");
-
+        String[] projectPath = targetProjectDir.split("/");
+        new File("logs/" + projectPath[projectPath.length-1] + ".csv").delete();
     }
 
     private static Set<CtClass> findClasses(File dir, String pkg) {
@@ -81,16 +81,16 @@ public class MutateTests {
             JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
         }
         else{
-            String fichiercsv = currentMutation + ";" + "false" + ";" + "true" + ";\n" ;
-            reportService.generateCSV(fichiercsv);
+            String[] projectPath = targetProjectDir.split("/");
+            FileLog.writeLog( projectPath[projectPath.length-1] , currentMutation + ";" + "false" + ";" + "true" + ";\n") ;
         }
         Mutators.deleteTargetClasses(classes, classDir);
     }
 
     @Test
-    public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
-        logger.info("Mutateur utilisé : MutateTests.replaceReturnInDoubleMethodsTest");
-        currentMutation = classDir  + "replaceReturnInDoubleMethodsTest" ;
+    public void replaceReturnInDoubleMethods() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
+        logger.info("Mutateur utilisé : MutateTests.replaceReturnInDoubleMethods");
+        currentMutation = "replaceReturnInDoubleMethods" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(classDir.getPath());
@@ -100,7 +100,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
-        currentMutation = classDir  + "SetBooleanMethodsToTrue" ;
+        currentMutation = "SetBooleanMethodsToTrue" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, true).writeFile(classDir.getPath());
@@ -110,6 +110,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToFalse() throws NotFoundException, CannotCompileException, IOException {
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToFalse");
+        currentMutation = "setBooleanMethodsToFalse" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, false).writeFile(classDir.getPath());
@@ -118,37 +119,43 @@ public class MutateTests {
 
     @Test
     public void addToSub(){
-        logger.info("MutateTests.addToSub");
+        logger.info("Mutateur utilisé : MutateTests.addToSub");
+        currentMutation = "addToSub" ;
         replaceInClasses(Opcode.DADD, Opcode.DSUB);
     }
 
     @Test
     public void subToAdd(){
         logger.info("MutateTests.subToAdd");
+        currentMutation = "subToAdd" ;
         replaceInClasses(Opcode.DSUB, Opcode.DADD);
     }
 
     @Test
     public void mulToDiv(){
         logger.info("MutateTests.mulToDiv");
+        currentMutation = "mulToDiv" ;
         replaceInClasses(Opcode.DMUL, Opcode.DDIV);
     }
 
     @Test
     public void divToMul(){
         logger.info("MutateTests.divToMul");
+        currentMutation = "divToMul" ;
         replaceInClasses(Opcode.DDIV, Opcode.DMUL);
     }
 
     @Test
     public void greaterToLower(){
         logger.info("MutateTests.greaterToLower");
+        currentMutation = "greaterToLower" ;
         replaceInClasses( Opcode.DCMPG, Opcode.DCMPL);
     }
 
     @Test
     public void lowerToGreater(){
         logger.info("MutateTests.lowerToGreater");
+        currentMutation = "lowerToGreater" ;
         replaceInClasses(Opcode.DCMPL, Opcode.DCMPG);
     }
 
