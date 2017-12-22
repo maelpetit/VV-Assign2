@@ -1,7 +1,6 @@
 package fr.istic.vv;
 
 import fr.istic.vv.log.FileLog;
-import fr.istic.vv.report.ReportServiceImpl;
 import javassist.*;
 import org.apache.maven.shared.invoker.*;
 import org.slf4j.Logger;
@@ -9,8 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
-import fr.istic.vv.report.Report;
-import fr.istic.vv.report.ReportService;
 
 public class TestRunner {
 
