@@ -1,24 +1,16 @@
 package fr.istic.vv;
 
 import fr.istic.vv.log.FileLog;
-import fr.istic.vv.report.Report;
-import fr.istic.vv.report.ReportService;
-import fr.istic.vv.report.ReportServiceImpl;
-import javafx.util.Pair;
 import javassist.bytecode.Opcode;
 import org.apache.maven.shared.invoker.*;
 import org.junit.*;
 import javassist.*;
-import javassist.bytecode.BadBytecode;
 import org.junit.BeforeClass;
-import org.junit.runner.JUnitCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,7 +36,7 @@ public class MutateTests {
         pool.appendClassPath(testDir.getPath());
         classes = findClasses(classDir, "");
         String[] projectPath = targetProjectDir.split("/");
-        new File("logs/" + projectPath[projectPath.length-1] + ".csv").delete();
+        new File("log/" + projectPath[projectPath.length-1] + ".csv").delete();
     }
 
     private static Set<CtClass> findClasses(File dir, String pkg) {
@@ -94,7 +86,7 @@ public class MutateTests {
     @Test
     public void replaceReturnInDoubleMethods(){
         logger.info("Mutateur utilisé : MutateTests.replaceReturnInDoubleMethods");
-        currentMutation = "replaceReturnInDoubleMethods" ;
+        currentMutation = "replace Double Methods" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
@@ -108,7 +100,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToTrue(){
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
-        currentMutation = "SetBooleanMethodsToTrue" ;
+        currentMutation = "Boolean Methods -> return true" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
@@ -124,7 +116,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToFalse(){
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToFalse");
-        currentMutation = "setBooleanMethodsToFalse" ;
+        currentMutation = "Boolean Methods -> return false" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
@@ -140,42 +132,42 @@ public class MutateTests {
     @Test
     public void addToSub(){
         logger.info("Mutateur utilisé : MutateTests.addToSub");
-        currentMutation = "addToSub" ;
+        currentMutation = "'+' is replaced by '-'" ;
         replaceInClasses(Opcode.DADD, Opcode.DSUB);
     }
 
     @Test
     public void subToAdd(){
         logger.info("MutateTests.subToAdd");
-        currentMutation = "subToAdd" ;
+        currentMutation = "'-' is replaced by '+'" ;
         replaceInClasses(Opcode.DSUB, Opcode.DADD);
     }
 
     @Test
     public void mulToDiv(){
         logger.info("MutateTests.mulToDiv");
-        currentMutation = "mulToDiv" ;
+        currentMutation = "'*' is replaced by '/'" ;
         replaceInClasses(Opcode.DMUL, Opcode.DDIV);
     }
 
     @Test
     public void divToMul(){
         logger.info("MutateTests.divToMul");
-        currentMutation = "divToMul" ;
+        currentMutation = "'/' is replaced by '*'" ;
         replaceInClasses(Opcode.DDIV, Opcode.DMUL);
     }
 
     @Test
     public void greaterToLower(){
         logger.info("MutateTests.greaterToLower");
-        currentMutation = "greaterToLower" ;
+        currentMutation = "'>' is replaced by '<'" ;
         replaceInClasses( Opcode.DCMPG, Opcode.DCMPL);
     }
 
     @Test
     public void lowerToGreater(){
         logger.info("MutateTests.lowerToGreater");
-        currentMutation = "lowerToGreater" ;
+        currentMutation = "'<' is replaced by '>'" ;
         replaceInClasses(Opcode.DCMPL, Opcode.DCMPG);
     }
 
