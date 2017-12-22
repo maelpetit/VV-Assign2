@@ -90,8 +90,6 @@ public class Mutators {
             ctClass.defrost();
             String fileName = ctClass.getName().replace('.', '/') + ".class";
             File file = new File(classDir + "/" + fileName);
-            System.out.println(file.getPath());
-            System.out.println(file.exists());
             file.delete();
         }
 

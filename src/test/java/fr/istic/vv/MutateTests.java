@@ -9,6 +9,8 @@ import javassist.*;
 import javassist.bytecode.BadBytecode;
 import org.junit.BeforeClass;
 import org.junit.runner.JUnitCore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.util.Set;
 
 public class MutateTests {
 
+    private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
     static ClassPool pool;
     static Loader loader;
     static Set<CtClass> classes = new HashSet<>();
@@ -82,7 +85,6 @@ public class MutateTests {
     @Test
     public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
         FileLog.log("MutateTests.replaceReturnInDoubleMethodsTest");
-        System.out.println("MutateTests.replaceReturnInDoubleMethodsTest");
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(classDir.getPath());
@@ -91,9 +93,8 @@ public class MutateTests {
 
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
-
-        FileLog.log("MutateTests.setBooleanMethodsToTrue");
-        System.out.println("MutateTests.setBooleanMethodsToTrue");
+        logger.info(System.getProperty("user.dir")) ;
+        logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, true).writeFile(classDir.getPath());
@@ -102,8 +103,7 @@ public class MutateTests {
 
     @Test
     public void setBooleanMethodsToFalse() throws NotFoundException, CannotCompileException, IOException {
-        FileLog.log("MutateTests.setBooleanMethodsToFalse");
-        System.out.println("MutateTests.setBooleanMethodsToFalse");
+        logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToFalse");
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, false).writeFile(classDir.getPath());
@@ -122,7 +122,6 @@ public class MutateTests {
                 Opcode.DCMPL, Opcode.DCMPG
         };
         for(int i = 0; i < byteCodes.length - 1; i += 2) {
-            System.out.println("MutateTests.arithmeticMutationsTest");
             for (CtClass ctClass : classes) {
                 ctClass.defrost();
                 Mutators.replace(ctClass, byteCodes[i], byteCodes[i + 1]).writeFile(classDir.getPath());

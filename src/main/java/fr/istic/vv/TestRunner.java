@@ -61,6 +61,14 @@ public class TestRunner {
         Invoker invoker = new DefaultInvoker();
         InvocationResult result = invoker.execute( request );
         allTestPassed = result.getExitCode() == 0;
+        if(allTestPassed ){
+            //tout les tests sont passé
+            logger.info("Tous les tests sont passés avec succès");
+        }
+        else{
+            logger.info("Erreur dans les tests, voir details au dessus");
+        }
+        //TODO : Essayer de sto le logger ici
     }
 
     private List<String> findTestClasses(File testDir, String pkg){
@@ -91,9 +99,6 @@ public class TestRunner {
 
         TestRunner testRunner = new TestRunner(projectDir);
         testRunner.runTests();
-        logger.info("toto") ;
-
-
         //FileLog.writeLog("TestRunner");
     }
 

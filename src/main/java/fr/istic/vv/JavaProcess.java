@@ -18,7 +18,6 @@ public final class JavaProcess {
 
     public static int exec(Class klass, String targetProjectPath) throws IOException,
             InterruptedException {
-        logger.info("toto2");
         String javaHome = System.getProperty("java.home");
         String javaBin = javaHome +
                 File.separator + "bin" +
@@ -29,14 +28,18 @@ public final class JavaProcess {
 
         ProcessBuilder builder = new ProcessBuilder(
                 javaBin, "-cp", classpath, className, args);
-        System.out.println("je lance un exec");
         builder.redirectErrorStream(true);
         Process process = builder.start();
         BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = in.readLine()) != null) {
             //FileLog.log(line);
-            logger.info(line);
+            if(line.contains("[INFO]") || line.contains("[ERROR]") || line.contains("	at")){
+
+            }
+            else {
+                logger.info(line);
+            }
         }
         //FileLog.writeLog("JavaProcess");
 
