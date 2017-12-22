@@ -17,3 +17,7 @@ vv-assign3\.iml
 TargetProject
 
 *.log
+
+target/surefire-reports/
+
+target/

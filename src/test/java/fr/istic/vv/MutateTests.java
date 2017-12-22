@@ -1,6 +1,8 @@
 package fr.istic.vv;
 
 import fr.istic.vv.log.FileLog;
+import javafx.util.Pair;
+import javassist.bytecode.Opcode;
 import org.apache.maven.shared.invoker.*;
 import org.junit.*;
 import javassist.*;
@@ -21,7 +23,7 @@ public class MutateTests {
     static Loader loader;
     static Set<CtClass> classes = new HashSet<>();
     static String targetDir = "target/classes";
-    static String targetProjectDir = "/home/mael/M2/VetV/TargetProject";
+    static String targetProjectDir = "/home/mael/M2/VetV/commons-cli";
     static File classDir;
 
     @BeforeClass
@@ -78,6 +80,7 @@ public class MutateTests {
     @Test
     public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
         FileLog.log("MutateTests.replaceReturnInDoubleMethodsTest");
+        System.out.println("MutateTests.replaceReturnInDoubleMethodsTest");
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(classDir.getPath());
@@ -87,6 +90,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
         FileLog.log("MutateTests.setBooleanMethodsToTrue");
+        System.out.println("MutateTests.setBooleanMethodsToTrue");
         for(CtClass ctClass : classes){
             System.out.println(ctClass.getName());
             ctClass.defrost();
@@ -97,6 +101,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToFalse() throws NotFoundException, CannotCompileException, IOException {
         FileLog.log("MutateTests.setBooleanMethodsToFalse");
+        System.out.println("MutateTests.setBooleanMethodsToFalse");
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, false).writeFile(classDir.getPath());
@@ -106,9 +111,20 @@ public class MutateTests {
     @Test
     public void arithmeticMutationsTest() throws BadBytecode, CannotCompileException, IOException, NotFoundException {
         FileLog.log("MutateTests.arithmeticMutationsTest");
-        for(CtClass ctClass : classes){
-            ctClass.defrost();
-            Mutators.arithmeticMutations(ctClass).writeFile(classDir.getPath());
+        int[] byteCodes = {
+                Opcode.DADD, Opcode.DSUB,
+                Opcode.DSUB, Opcode.DADD,
+                Opcode.DMUL, Opcode.DDIV,
+                Opcode.DDIV, Opcode.DMUL,
+                Opcode.DCMPG, Opcode.DCMPL,
+                Opcode.DCMPL, Opcode.DCMPG
+        };
+        for(int i = 0; i < byteCodes.length - 1; i += 2) {
+            System.out.println("MutateTests.arithmeticMutationsTest");
+            for (CtClass ctClass : classes) {
+                ctClass.defrost();
+                Mutators.replace(ctClass, byteCodes[i], byteCodes[i + 1]).writeFile(classDir.getPath());
+            }
         }
     }
 }

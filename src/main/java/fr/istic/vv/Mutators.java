@@ -27,6 +27,7 @@ public class Mutators {
                         f.replace("{ $_ = 0; }");
                     }
                 });
+                System.out.println("Mutators.replaceReturnInDoubleMethods return 0");
             }
         }
 
@@ -45,11 +46,7 @@ public class Mutators {
                         ctMethod.setBody("return " + bool + ";");
                         System.out.println("Mutators.setBooleanMethodsTo body modified");
                     }
-                } catch (NotFoundException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e){
-                    e.printStackTrace();
-                } catch (CannotCompileException e) {
+                } catch (NotFoundException | NullPointerException | CannotCompileException e) {
                     e.printStackTrace();
                 }
             }
@@ -59,24 +56,9 @@ public class Mutators {
         return ctClass;
     }
 
-    public static CtClass arithmeticMutations(CtClass ctClass) throws BadBytecode {
+    public static CtClass replace(CtClass ctClass, int oldBytecode, int newBytecode){
         if(ctClass.isInterface()){
             return ctClass;
-        }
-        int oldBytecode = 0;
-        int newBytecode = 0;
-        if(ctClass.getName().contains("Addition")) {
-            oldBytecode = Opcode.DADD;
-            newBytecode = Opcode.DSUB;
-        }else if(ctClass.getName().contains("Subtraction")){
-            oldBytecode = Opcode.DSUB;
-            newBytecode = Opcode.DADD;
-        }else if(ctClass.getName().contains("Multiplication")){
-            oldBytecode = Opcode.DMUL;
-            newBytecode = Opcode.DDIV;
-        }else if(ctClass.getName().contains("Division")){
-            oldBytecode = Opcode.DDIV;
-            newBytecode = Opcode.DMUL;
         }
 
         for (CtMethod ctMethod : ctClass.getDeclaredMethods()) {
@@ -86,15 +68,21 @@ public class Mutators {
         return ctClass;
     }
 
-    private static CtMethod replace(CtMethod ctMethod, int oldBytecode, int newBytecode) throws BadBytecode {
-        MethodInfo methodInfo = ctMethod.getMethodInfo();
-        CodeIterator codeIterator = methodInfo.getCodeAttribute().iterator();
-        while(codeIterator.hasNext()){
-            int pos = codeIterator.next();
-            if(codeIterator.byteAt(pos) == oldBytecode){
-                codeIterator.writeByte(newBytecode, pos);
+    private static CtMethod replace(CtMethod ctMethod, int oldBytecode, int newBytecode){
+        try{
+            MethodInfo methodInfo = ctMethod.getMethodInfo();
+            CodeIterator codeIterator = methodInfo.getCodeAttribute().iterator();
+            while(codeIterator.hasNext()){
+                int pos = codeIterator.next();
+                if(codeIterator.byteAt(pos) == oldBytecode){
+                    codeIterator.writeByte(newBytecode, pos);
+                    System.out.println("Mutators.replace bytecode " + oldBytecode + " -> " + newBytecode);
+                }
             }
+        }catch(Exception e){
+            e.printStackTrace();
         }
+
         return ctMethod;
     }
 
