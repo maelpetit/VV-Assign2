@@ -194,6 +194,8 @@ public class MutateTests {
 
     @Test
     public void removeBodyInVoidMethods(){
+        logger.info("Mutateur utilisé : MutateTests.removeBodyInVoidMethods");
+        currentMutation = "removed body of void methods" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
