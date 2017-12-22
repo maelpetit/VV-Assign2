@@ -1,8 +1,11 @@
 package fr.istic.vv;
 
+import fr.istic.vv.log.FileLog;
 import javassist.*;
 import org.apache.maven.shared.invoker.*;
 import org.junit.runner.JUnitCore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -18,6 +21,7 @@ public class TestRunner {
     private String projectDir;
     private URL[] urls;
     private boolean allTestPassed;
+    private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     private TestRunner(String projectPath){
         projectDir = projectPath;
@@ -73,20 +77,24 @@ public class TestRunner {
     }
 
     public static void main(String[] args) throws Throwable {
-        String projectDir = "/home/mael/M2/VetV/commons-cli";//"/home/mael/M2/VetV/TargetProject";
-        System.setProperty("maven.home", "/home/mael/Applications/apache-maven-3.5.0");
+
+
+        //TODO : Remodifier le path avant de commit !
+        String projectDir = "/home/paget/dev/TargetProject";//"/home/paget/dev/TargetProject"; /home/mael/M2/VetV/TargetProject" // demander pour le projet commons-cli
+        System.setProperty("maven.home", "/usr/local/apache-maven-3.5.0"); // chemin mael : "/home/mael/Applications...
         if(args.length > 0){
             projectDir = args[0];
         }
 
-        //FileLog
-//        FileLog.writeLog("FileLog");
+        // FileLog
+        //FileLog.writeLog("FileLog");
 
         TestRunner testRunner = new TestRunner(projectDir);
         testRunner.runTests();
+        logger.info("toto") ;
 
 
-//        FileLog.writeLog("TestRunner");
+        //FileLog.writeLog("TestRunner");
     }
 
 

@@ -23,12 +23,14 @@ public class MutateTests {
     static Loader loader;
     static Set<CtClass> classes = new HashSet<>();
     static String targetDir = "target/classes";
-    static String targetProjectDir = "/home/mael/M2/VetV/commons-cli";
+    // TODO : Remodifier le path avant de commit !
+    static String targetProjectDir = "/home/paget/dev/TargetProject";
     static File classDir;
 
     @BeforeClass
     public static void initClass() throws Throwable {
-        System.setProperty("maven.home", "/home/mael/Applications/apache-maven-3.5.0");
+        // TODO : Remodifier le path avant de commit !
+        System.setProperty("maven.home", "/usr/local/apache-maven-3.5.0");
         pool = ClassPool.getDefault();
         loader = new Loader(pool);
         classDir = new File(targetProjectDir + "/target/classes");
@@ -89,10 +91,10 @@ public class MutateTests {
 
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
+
         FileLog.log("MutateTests.setBooleanMethodsToTrue");
         System.out.println("MutateTests.setBooleanMethodsToTrue");
         for(CtClass ctClass : classes){
-            System.out.println(ctClass.getName());
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, true).writeFile(classDir.getPath());
         }

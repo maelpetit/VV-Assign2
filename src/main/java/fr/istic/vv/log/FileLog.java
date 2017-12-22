@@ -35,8 +35,14 @@ public class FileLog {
         FileLog instance = getInstance();
         String projectDir = System.getProperty("user.dir");
         try {
-            File file = new File(projectDir + "/logs/" + fileName + "-" + LocalDateTime.now().toString().replace(':', '_') + ".log");
-            file.createNewFile();
+            File file = new File(projectDir + "/logs/" + fileName + ".log"); //"-" + LocalDateTime.now().toString().replace(':', '_')
+            System.out.println("il est la !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(projectDir + "/logs/" + fileName + "-" + LocalDateTime.now().toString().replace(':', '_') + ".log");
+            if (!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+            if (!file.exists())
+                file.createNewFile();
+           // file.createNewFile();
             FileWriter fw = new FileWriter(file);
             instance.content = "LogFile : \n - Tests : \n"+ instance.content ;
             fw.write(instance.content);
@@ -48,4 +54,13 @@ public class FileLog {
         }
 
     }
+
+/*    public static void afterLog(String fileName){
+        String projectDir = System.getProperty("user.dir");
+        File file = File(projectDir + "/logs/" + fileName + ".log");
+        if(file.exists) {
+            getInstance().content += message + "\n";
+        }
+
+    }*/
 }

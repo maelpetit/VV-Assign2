@@ -44,7 +44,6 @@ public class Mutators {
                 try {
                     if(ctMethod.getReturnType().getName().equals("boolean")){
                         ctMethod.setBody("return " + bool + ";");
-                        System.out.println("Mutators.setBooleanMethodsTo body modified");
                     }
                 } catch (NotFoundException | NullPointerException | CannotCompileException e) {
                     e.printStackTrace();
