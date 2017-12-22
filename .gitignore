@@ -23,3 +23,5 @@ target/surefire-reports/
 target/
 
 *.csv
+
+src/main/resources/config\.properties
