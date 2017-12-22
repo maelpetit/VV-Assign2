@@ -1,15 +1,18 @@
 package fr.istic.vv;
 
 import fr.istic.vv.log.FileLog;
+import fr.istic.vv.report.ReportServiceImpl;
 import javassist.*;
 import org.apache.maven.shared.invoker.*;
 import org.junit.runner.JUnitCore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
+import fr.istic.vv.report.Report;
+import fr.istic.vv.report.ReportService;
 
 public class TestRunner {
 
@@ -18,6 +21,7 @@ public class TestRunner {
     private String projectDir;
     private boolean allTestPassed;
     private String mutation;
+    private ReportService reportService = new ReportServiceImpl();
     private static final Logger logger = LoggerFactory.getLogger(TestRunner.class);
 
     private TestRunner(String projectPath, String mutation){
@@ -47,7 +51,7 @@ public class TestRunner {
 
     }
 
-    private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException {
+    private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException, IOException {
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile( new File( projectDir + "/pom.xml" ) );
@@ -62,7 +66,10 @@ public class TestRunner {
         else{
             logger.info("Erreur dans les tests, voir details au dessus");
         }
-        //TODO : Essayer de sto le logger ici
+        String fichiercsv = mutation + ";" + "true" + ";" + allTestPassed + ";\n" ;
+        reportService.addReport(new Report(allTestPassed), fichiercsv );
+        reportService.generateCSV(fichiercsv);
+        //br.close();
     }
 
     private List<String> findTestClasses(File testDir, String pkg){

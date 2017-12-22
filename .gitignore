@@ -21,3 +21,5 @@ TargetProject
 target/surefire-reports/
 
 target/
+
+*.csv

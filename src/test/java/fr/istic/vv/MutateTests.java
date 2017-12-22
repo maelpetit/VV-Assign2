@@ -1,6 +1,9 @@
 package fr.istic.vv;
 
 import fr.istic.vv.log.FileLog;
+import fr.istic.vv.report.Report;
+import fr.istic.vv.report.ReportService;
+import fr.istic.vv.report.ReportServiceImpl;
 import javafx.util.Pair;
 import javassist.bytecode.Opcode;
 import org.apache.maven.shared.invoker.*;
@@ -28,6 +31,7 @@ public class MutateTests {
     static String targetProjectDir = PropertiesLoader.getTargetProject();
     static File classDir;
     static String currentMutation;
+    private ReportService reportService = new ReportServiceImpl();
 
     @BeforeClass
     public static void initClass() throws Throwable {
@@ -81,12 +85,17 @@ public class MutateTests {
         if(Mutators.HAS_MUTATED){
             JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
         }
+        else{
+            String fichiercsv = currentMutation + ";" + "false" + ";" + "true" + ";\n" ;
+            reportService.generateCSV(fichiercsv);
+        }
         Mutators.deleteTargetClasses(classes, classDir);
     }
 
     @Test
     public void replaceReturnInDoubleMethodsTest() throws NotFoundException, CannotCompileException, IOException, ClassNotFoundException {
-        FileLog.log("MutateTests.replaceReturnInDoubleMethodsTest");
+        logger.info("Mutateur utilisé : MutateTests.replaceReturnInDoubleMethodsTest");
+        currentMutation = classDir  + "replaceReturnInDoubleMethodsTest" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.replaceReturnInDoubleMethods(ctClass).writeFile(classDir.getPath());
@@ -96,6 +105,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToTrue() throws NotFoundException, CannotCompileException, IOException {
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
+        currentMutation = classDir  + "SetBooleanMethodsToTrue" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             Mutators.setBooleanMethodsTo(ctClass, true).writeFile(classDir.getPath());
