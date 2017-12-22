@@ -23,6 +23,7 @@ public class MutateTests {
     static String targetProjectDir = PropertiesLoader.getTargetProject();
     static File classDir;
     static String currentMutation;
+    static String csvFile;
 
     @BeforeClass
     public static void initClass() throws Throwable {
@@ -36,7 +37,13 @@ public class MutateTests {
         pool.appendClassPath(testDir.getPath());
         classes = findClasses(classDir, "");
         String[] projectPath = targetProjectDir.split("/");
-        new File("log/" + projectPath[projectPath.length-1] + ".csv").delete();
+        csvFile = "log/" + projectPath[projectPath.length-1] + ".csv";
+        new File(csvFile).delete();
+    }
+
+    @AfterClass
+    public static void afterClass(){
+        HTMLGenerator.genFile(csvFile);
     }
 
     private static Set<CtClass> findClasses(File dir, String pkg) {
@@ -68,8 +75,7 @@ public class MutateTests {
         String[] projectPath = targetProjectDir.split("/");
         if(Mutators.HAS_MUTATED){
             try {
-                int exitValue = JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
-                FileLog.writeLog( projectPath[projectPath.length-1], currentMutation + "#####" + exitValue);
+                JavaProcess.exec(TestRunner.class, targetProjectDir, currentMutation);
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,7 +89,7 @@ public class MutateTests {
     @Test
     public void replaceReturnInDoubleMethods(){
         logger.info("Mutateur utilisé : MutateTests.replaceReturnInDoubleMethods");
-        currentMutation = "replace Double Methods" ;
+        currentMutation = "body of boolean methods to 'return false'" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
@@ -97,7 +103,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToTrue(){
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToTrue");
-        currentMutation = "Boolean Methods -> return true" ;
+        currentMutation = "body of boolean methods to 'return true'" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
@@ -113,7 +119,7 @@ public class MutateTests {
     @Test
     public void setBooleanMethodsToFalse(){
         logger.info("Mutateur utilisé : MutateTests.setBooleanMethodsToFalse");
-        currentMutation = "Boolean Methods -> return false" ;
+        currentMutation = "body of boolean methods to 'return false'" ;
         for(CtClass ctClass : classes){
             ctClass.defrost();
             try {
@@ -127,45 +133,157 @@ public class MutateTests {
     }
 
     @Test
-    public void addToSub(){
-        logger.info("Mutateur utilisé : MutateTests.addToSub");
-        currentMutation = "'+' is replaced by '-'" ;
+    public void addToSubD(){
+        logger.info("Mutateur utilisé : MutateTests.addToSubD");
+        currentMutation = "(double) '+' is replaced by '-'" ;
         replaceInClasses(Opcode.DADD, Opcode.DSUB);
     }
 
     @Test
-    public void subToAdd(){
-        logger.info("MutateTests.subToAdd");
-        currentMutation = "'-' is replaced by '+'" ;
+    public void subToAddD(){
+        logger.info("MutateTests.subToAddD");
+        currentMutation = "(double) '-' is replaced by '+'" ;
         replaceInClasses(Opcode.DSUB, Opcode.DADD);
     }
 
     @Test
-    public void mulToDiv(){
-        logger.info("MutateTests.mulToDiv");
-        currentMutation = "'*' is replaced by '/'" ;
+    public void mulToDivD(){
+        logger.info("MutateTests.mulToDivD");
+        currentMutation = "(double) '*' is replaced by '/'" ;
         replaceInClasses(Opcode.DMUL, Opcode.DDIV);
     }
 
     @Test
-    public void divToMul(){
-        logger.info("MutateTests.divToMul");
-        currentMutation = "'/' is replaced by '*'" ;
+    public void divToMulD(){
+        logger.info("MutateTests.divToMulD");
+        currentMutation = "(double) '/' is replaced by '*'" ;
         replaceInClasses(Opcode.DDIV, Opcode.DMUL);
     }
 
     @Test
-    public void greaterToLower(){
-        logger.info("MutateTests.greaterToLower");
-        currentMutation = "'>' is replaced by '<'" ;
+    public void greaterToLowerD(){
+        logger.info("MutateTests.greaterToLowerD");
+        currentMutation = "(double) '>' is replaced by '<'" ;
         replaceInClasses( Opcode.DCMPG, Opcode.DCMPL);
     }
 
     @Test
-    public void lowerToGreater(){
+    public void lowerToGreaterD(){
         logger.info("MutateTests.lowerToGreater");
-        currentMutation = "'<' is replaced by '>'" ;
+        currentMutation = "(double) '<' is replaced by '>'" ;
         replaceInClasses(Opcode.DCMPL, Opcode.DCMPG);
+    }
+
+    @Test
+    public void addToSubF(){
+        logger.info("Mutateur utilisé : MutateTests.addToSub");
+        currentMutation = "(float) '+' is replaced by '-'" ;
+        replaceInClasses(Opcode.FADD, Opcode.FSUB);
+    }
+
+    @Test
+    public void subToAddF(){
+        logger.info("MutateTests.subToAdd");
+        currentMutation = "(float) '-' is replaced by '+'" ;
+        replaceInClasses(Opcode.FSUB, Opcode.FADD);
+    }
+
+    @Test
+    public void mulToDivF(){
+        logger.info("MutateTests.mulToDiv");
+        currentMutation = "(float) '*' is replaced by '/'" ;
+        replaceInClasses(Opcode.FMUL, Opcode.FDIV);
+    }
+
+    @Test
+    public void divToMulF(){
+        logger.info("MutateTests.divToMul");
+        currentMutation = "(float) '/' is replaced by '*'" ;
+        replaceInClasses(Opcode.FDIV, Opcode.FMUL);
+    }
+
+    @Test
+    public void greaterToLowerF(){
+        logger.info("MutateTests.greaterToLower");
+        currentMutation = "(float) '>' is replaced by '<'" ;
+        replaceInClasses( Opcode.FCMPG, Opcode.FCMPL);
+    }
+
+    @Test
+    public void lowerToGreaterF(){
+        logger.info("MutateTests.lowerToGreater");
+        currentMutation = "(float) '<' is replaced by '>'" ;
+        replaceInClasses(Opcode.FCMPL, Opcode.FCMPG);
+    }
+
+    @Test
+    public void addToSubI(){
+        logger.info("Mutateur utilisé : MutateTests.addToSub");
+        currentMutation = "(integer) '+' is replaced by '-'" ;
+        replaceInClasses(Opcode.IADD, Opcode.ISUB);
+    }
+
+    @Test
+    public void subToAddI(){
+        logger.info("MutateTests.subToAdd");
+        currentMutation = "(integer) '-' is replaced by '+'" ;
+        replaceInClasses(Opcode.ISUB, Opcode.IADD);
+    }
+
+    @Test
+    public void mulToDivI(){
+        logger.info("MutateTests.mulToDiv");
+        currentMutation = "(integer) '*' is replaced by '/'" ;
+        replaceInClasses(Opcode.IMUL, Opcode.IDIV);
+    }
+
+    @Test
+    public void divToMulI(){
+        logger.info("MutateTests.divToMul");
+        currentMutation = "(integer) '/' is replaced by '*'" ;
+        replaceInClasses(Opcode.IDIV, Opcode.IMUL);
+    }
+
+    @Test
+    public void addToSubL(){
+        logger.info("Mutateur utilisé : MutateTests.addToSub");
+        currentMutation = "(long) '+' is replaced by '-'" ;
+        replaceInClasses(Opcode.LADD, Opcode.LSUB);
+    }
+
+    @Test
+    public void subToAddL(){
+        logger.info("MutateTests.subToAdd");
+        currentMutation = "(long) '-' is replaced by '+'" ;
+        replaceInClasses(Opcode.LSUB, Opcode.LADD);
+    }
+
+    @Test
+    public void mulToDivL(){
+        logger.info("MutateTests.mulToDiv");
+        currentMutation = "(long) '*' is replaced by '/'" ;
+        replaceInClasses(Opcode.LMUL, Opcode.LDIV);
+    }
+
+    @Test
+    public void divToMulL(){
+        logger.info("MutateTests.divToMul");
+        currentMutation = "(long) '/' is replaced by '*'" ;
+        replaceInClasses(Opcode.LDIV, Opcode.LMUL);
+    }
+
+    @Test
+    public void ifEqToIfNe(){
+        logger.info("MutateTests.ifEqToIfNe");
+        currentMutation = "'if==' is replaced by 'if!='" ;
+        replaceInClasses(Opcode.IFEQ, Opcode.IFNE);
+    }
+
+    @Test
+    public void ifNeToIfEq(){
+        logger.info("MutateTests.ifNeToIfEq");
+        currentMutation = "'if!=' is replaced by 'if=='" ;
+        replaceInClasses(Opcode.IFNE, Opcode.IFEQ);
     }
 
     private void replaceInClasses(int oldByteCode, int newByteCode){

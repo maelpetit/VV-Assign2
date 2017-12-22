@@ -19,7 +19,6 @@ public class FileLog {
                 file.createNewFile();
             }
             FileWriter fw = new FileWriter(file, true);
-            System.out.println(" on va ecrire ca : " + message);
             fw.append(message);
             fw.flush();
             fw.close();
@@ -28,13 +27,4 @@ public class FileLog {
         }
 
     }
-
-/*    public static void afterLog(String fileName){
-        String projectDir = System.getProperty("user.dir");
-        File file = File(projectDir + "/logs/" + fileName + ".log");
-        if(file.exists) {
-            getInstance().content += message + "\n";
-        }
-
-    }*/
 }

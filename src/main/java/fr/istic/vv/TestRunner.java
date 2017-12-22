@@ -12,7 +12,6 @@ import java.util.*;
 public class TestRunner {
 
     private ClassPool pool;
-    private Set<Class> testClasses = new HashSet<Class>();
     private String projectDir;
     private int allTestPassed; //0 = all tests passed, 1 = some failed, -1 = infinite loop
     private String mutation;
@@ -27,22 +26,9 @@ public class TestRunner {
         try {
             pool.appendClassPath(classDir.getPath());
             pool.appendClassPath(testDir.getPath());
-
-            String[] _testClasses = findTestClasses(testDir, "").toArray(new String[0]);
-
-            for(CtClass ctClass : pool.get(_testClasses)){
-                try {
-                    testClasses.add(ctClass.toClass());
-                }catch(CannotCompileException e){
-                    e.printStackTrace();
-                }
-            }
-
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private void runTests() throws NotFoundException, CannotCompileException, MavenInvocationException {
@@ -60,19 +46,6 @@ public class TestRunner {
 
     }
 
-    private List<String> findTestClasses(File testDir, String pkg){
-        List<String> res = new ArrayList<>();
-        for(File file : testDir.listFiles()){
-            if(file.isFile() && file.getName().endsWith(".class")){
-                String fileName = file.getName();
-                res.add(pkg + fileName.substring(0, fileName.length() - 6));
-            }else if(file.isDirectory()){
-                res.addAll(findTestClasses(file, pkg + file.getName() + "."));
-            }
-        }
-        return res;
-    }
-
     public static void main(String[] args) throws Throwable {
 
         if(args.length > 0){
@@ -86,7 +59,5 @@ public class TestRunner {
             System.out.println("Missing argument");
         }
     }
-
-
 
 }

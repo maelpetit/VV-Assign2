@@ -39,16 +39,6 @@ public final class JavaProcess {
         ProcessBuilder builder = new ProcessBuilder(COMMAND).inheritIO();
         builder.redirectErrorStream(true);
         Process process = builder.start();
-        /*BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        while ((line = in.readLine()) != null) {
-            if(line.contains("[INFO]") || line.contains("[ERROR]") || line.contains("	at")){
-
-            }
-            else {
-                logger.info(line);
-            }
-        }*/
         process.waitFor();
         process.destroy();
         return process.exitValue();

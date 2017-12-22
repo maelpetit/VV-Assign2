@@ -29,15 +29,10 @@ public class MavenUtil {
             try {
                 process = builder.start();
                 process.waitFor(30, TimeUnit.SECONDS);
-                process.destroy();
-
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            try {
+                process.destroyForcibly();
                 return process.exitValue();
-            } catch (IllegalThreadStateException e) {
+            } catch (IOException | InterruptedException | IllegalThreadStateException e) {
+                e.printStackTrace();
                 return -1;
             }
         }else{

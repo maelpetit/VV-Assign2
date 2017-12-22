@@ -25,3 +25,5 @@ target/
 *.csv
 
 src/main/resources/config\.properties
+
+log/
